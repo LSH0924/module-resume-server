@@ -3,12 +3,15 @@ package main
 import (
 	"log"
 
-	"module.resume/internal/api"
+	"module.resume/internal/container"
 )
 
 func main() {
-	r := api.MakeRouter()
-	if err := r.Run(":8080"); err != nil {
+	c, err := container.NewContainer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := c.Router.Run(":8080"); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
 	}
 }

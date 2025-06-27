@@ -1,19 +1,27 @@
 package api
 
 import (
-	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"module.resume/internal/api/handler"
+	"module.resume/internal/api/middleware"
 )
 
-func MakeRouter() *gin.Engine {
+func MakeRouter(handlers *handler.Handlers) *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.TimeoutMiddleware(10 * time.Second))
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Hello from api/router.go!",
-		})
-	})
+	user := r.Group("/user")
+	{
+		user.POST("/", handlers.User.Save)
+		user.DELETE("/:id", handlers.User.Delete)
+		me := user.Group("/me")
+		{
+			me.PUT("/", handlers.User.Update)
+			me.PUT("/password", handlers.User.UpdatePassword)
+		}
+	}
 
 	return r
 }
