@@ -15,6 +15,15 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
+func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*user.User, error) {
+	user := &User{}
+	result := r.db.WithContext(ctx).Where("email = ?", email).First(user)
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+	return user.toDomain(), nil
+}
+
 func (r *UserRepository) Save(ctx context.Context, user *user.User) (uint, error) {
 	gormUser := fromDomain(user)
 	err := r.db.WithContext(ctx).Create(gormUser).Error

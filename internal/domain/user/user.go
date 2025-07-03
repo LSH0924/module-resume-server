@@ -41,6 +41,13 @@ func NewUserForUpdate(id uint, email, name, profileUrl string) *User {
 	}
 }
 
+func NewUserForLogin(email, password string) *User {
+	return &User{
+		Email:    email,
+		Password: password,
+	}
+}
+
 func Hydrate(id uint, email, name, hashedPassword string, createdAt, updatedAt time.Time) *User {
 	return &User{
 		ID:           id,
@@ -58,4 +65,8 @@ func (u *User) CheckPassword(plainPassword string) bool {
 
 func (u *User) PasswordHash() string {
 	return u.passwordHash
+}
+
+func (u *User) SetPasswordHash(passwordHash string) {
+	u.passwordHash = passwordHash
 }

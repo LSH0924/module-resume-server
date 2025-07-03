@@ -8,8 +8,9 @@ import (
 	"module.resume/internal/api/middleware"
 )
 
-func MakeRouter(handlers *handler.Handlers) *gin.Engine {
+func MakeRouter(handlers *handler.Handlers, authMiddleware gin.HandlerFunc) *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.TokenExtractorMiddleware())
 	r.Use(middleware.TimeoutMiddleware(10 * time.Second))
 
 	user := r.Group("/user")
@@ -18,9 +19,15 @@ func MakeRouter(handlers *handler.Handlers) *gin.Engine {
 		user.DELETE("/:id", handlers.User.Delete)
 		me := user.Group("/me")
 		{
+			me.Use(authMiddleware)
 			me.PUT("/", handlers.User.Update)
 			me.PUT("/password", handlers.User.UpdatePassword)
 		}
+	}
+
+	{
+		r.POST("/login", handlers.Auth.Login)
+		r.POST("/logout", handlers.Auth.Logout)
 	}
 
 	return r

@@ -19,13 +19,13 @@ func (User) TableName() string {
 	return "user"
 }
 
-func (m *User) toDomain() *user.User {
+func (m User) toDomain() *user.User {
 	var deletedAt *time.Time
 	if m.DeletedAt.Valid {
 		deletedAt = &m.DeletedAt.Time
 	}
 
-	return &user.User{
+	domainUser := &user.User{
 		ID:        m.ID,
 		Email:     m.Email,
 		Name:      m.Name,
@@ -33,6 +33,8 @@ func (m *User) toDomain() *user.User {
 		UpdatedAt: m.UpdatedAt,
 		DeletedAt: deletedAt,
 	}
+	domainUser.SetPasswordHash(m.PasswordHash)
+	return domainUser
 }
 
 func fromDomain(u *user.User) *User {
