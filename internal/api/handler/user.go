@@ -75,4 +75,21 @@ func (h *UserHandler) UpdatePassword(c *gin.Context) {
 }
 
 func (h *UserHandler) Delete(c *gin.Context) {
+	requestUser := request.DeleteUser{}
+	if err := c.ShouldBindUri(&requestUser); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, err)
+		return
+	}
+	if err := h.service.Delete(c.Request.Context(), requestUser.ToDomain()); err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			c.JSON(http.StatusGatewayTimeout, gin.H{
+				"error": "Database operation timed out",
+			})
+			return
+		}
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
 }

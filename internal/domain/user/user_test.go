@@ -20,7 +20,7 @@ func TestNewUserForSave(t *testing.T) {
 		assert.NotNil(t, user)
 		assert.Equal(t, email, user.Email)
 		assert.Equal(t, name, user.Name)
-		assert.Equal(t, profileURL, user.ProfileUrl)
+		assert.Equal(t, profileURL, user.ProfileURL)
 		assert.NotEmpty(t, user.PasswordHash())
 		assert.NotEqual(t, password, user.PasswordHash())
 
@@ -47,7 +47,7 @@ func TestUser_CheckPassword(t *testing.T) {
 }
 
 func TestNewUserForUpdate(t *testing.T) {
-	id := uint(1)
+	id := int64(1)
 	email := "update@example.com"
 	name := "Updated User"
 	profileURL := "http://example.com/new.jpg"
@@ -57,7 +57,7 @@ func TestNewUserForUpdate(t *testing.T) {
 	assert.Equal(t, id, user.ID)
 	assert.Equal(t, email, user.Email)
 	assert.Equal(t, name, user.Name)
-	assert.Equal(t, profileURL, user.ProfileUrl)
+	assert.Equal(t, profileURL, user.ProfileURL)
 }
 
 func TestNewUserForLogin(t *testing.T) {
@@ -71,13 +71,13 @@ func TestNewUserForLogin(t *testing.T) {
 }
 
 func TestHydrate(t *testing.T) {
-	id := uint(1)
+	id := int64(1)
 	email := "hydrated@example.com"
 	name := "Hydrated User"
 	hashedPassword := "hashed_password_string"
 	now := time.Now()
 
-	user := Hydrate(id, email, name, hashedPassword, now, now)
+	user := Hydrate(id, email, name, hashedPassword, now, now, &now)
 
 	assert.Equal(t, id, user.ID)
 	assert.Equal(t, email, user.Email)
@@ -85,6 +85,7 @@ func TestHydrate(t *testing.T) {
 	assert.Equal(t, hashedPassword, user.PasswordHash())
 	assert.Equal(t, now, user.CreatedAt)
 	assert.Equal(t, now, user.UpdatedAt)
+	assert.Equal(t, now, user.DeletedAt)
 }
 
 func TestUser_SetPasswordHash(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 )
 
 type UserService interface {
-	Save(context context.Context, user *user.User) (uint, error)
-	Update(context context.Context, user *user.User) (uint, error)
+	Save(context context.Context, user *user.User) (int64, error)
+	Update(context context.Context, user *user.User) (int64, error)
 	Delete(context context.Context, user *user.User) error
 }
 
@@ -22,11 +22,11 @@ func NewUserService(repo user.Repository) UserService {
 	}
 }
 
-func (service *userService) Save(context context.Context, user *user.User) (uint, error) {
+func (service *userService) Save(context context.Context, user *user.User) (int64, error) {
 	return service.repo.Save(context, user)
 }
 
-func (service *userService) Update(context context.Context, user *user.User) (uint, error) {
+func (service *userService) Update(context context.Context, user *user.User) (int64, error) {
 	return service.repo.Update(context, user)
 }
 

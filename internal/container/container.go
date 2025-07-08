@@ -11,6 +11,7 @@ import (
 	"module.resume/internal/application"
 	"module.resume/internal/infrastructure/cache"
 	"module.resume/internal/infrastructure/persistence/gorm"
+	"module.resume/internal/infrastructure/persistence/gorm/query"
 )
 
 type Container struct {
@@ -23,7 +24,9 @@ func NewContainer() (*Container, error) {
 		return nil, err
 	}
 
-	userRepo := gorm.NewUserRepository(db)
+	q := query.Use(db)
+
+	userRepo := gorm.NewUserRepository(q)
 	userService := application.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 

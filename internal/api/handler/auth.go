@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"module.resume/internal/api/request"
+	"module.resume/internal/api/response"
 	"module.resume/internal/application"
 )
 
@@ -30,7 +31,9 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, err)
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"accessToken": token})
+
+	result := response.LoginResponse{AccessToken: token}
+	c.JSON(http.StatusOK, result)
 }
 
 func (a *AuthHandler) Logout(c *gin.Context) {
@@ -43,5 +46,5 @@ func (a *AuthHandler) Logout(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Successfully logged out"})
+	c.JSON(http.StatusOK, nil)
 }

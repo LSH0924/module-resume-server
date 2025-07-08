@@ -7,12 +7,12 @@ import (
 )
 
 type User struct {
-	ID           uint
+	ID           int64
 	Email        string
 	Name         string
 	Password     string
 	passwordHash string
-	ProfileUrl   string
+	ProfileURL   string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
@@ -28,16 +28,22 @@ func NewUserForSave(email, name, plainPassword, profileUrl string) (*User, error
 		Email:        email,
 		Name:         name,
 		passwordHash: hashedPassword,
-		ProfileUrl:   profileUrl,
+		ProfileURL:   profileUrl,
 	}, nil
 }
 
-func NewUserForUpdate(id uint, email, name, profileUrl string) *User {
+func NewUserForUpdate(id int64, email, name, profileUrl string) *User {
 	return &User{
 		ID:         id,
 		Email:      email,
 		Name:       name,
-		ProfileUrl: profileUrl,
+		ProfileURL: profileUrl,
+	}
+}
+
+func NewUserForDelete(id int64) *User {
+	return &User{
+		ID: id,
 	}
 }
 
@@ -48,7 +54,7 @@ func NewUserForLogin(email, password string) *User {
 	}
 }
 
-func Hydrate(id uint, email, name, hashedPassword string, createdAt, updatedAt time.Time) *User {
+func Hydrate(id int64, email, name, hashedPassword string, createdAt, updatedAt time.Time, deletedAt *time.Time) *User {
 	return &User{
 		ID:           id,
 		Email:        email,
@@ -56,11 +62,16 @@ func Hydrate(id uint, email, name, hashedPassword string, createdAt, updatedAt t
 		passwordHash: hashedPassword,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
+		DeletedAt:    deletedAt,
 	}
 }
 
 func (u *User) CheckPassword(plainPassword string) bool {
 	return util.CheckPasswordHash(plainPassword, u.passwordHash)
+}
+
+func (u *User) Int64ID() int64 {
+	return int64(u.ID)
 }
 
 func (u *User) PasswordHash() string {

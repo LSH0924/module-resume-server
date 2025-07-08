@@ -3,45 +3,51 @@ package gorm
 import (
 	"context"
 
-	"gorm.io/gorm"
 	"module.resume/internal/domain/user"
+	"module.resume/internal/infrastructure/persistence/gorm/mapper"
+	"module.resume/internal/infrastructure/persistence/gorm/query"
 )
 
 type UserRepository struct {
-	db *gorm.DB
+	query *query.Query
 }
 
-func NewUserRepository(db *gorm.DB) *UserRepository {
-	return &UserRepository{db}
+func NewUserRepository(query *query.Query) *UserRepository {
+	return &UserRepository{query}
 }
 
 func (r *UserRepository) FindByEmail(ctx context.Context, email string) (*user.User, error) {
-	user := &User{}
-	result := r.db.WithContext(ctx).Where("email = ?", email).First(user)
-	if err := result.Error; err != nil {
+	u := r.query.User
+	result, err := u.WithContext(ctx).Where(u.Email.Eq(email)).First()
+	if err != nil {
 		return nil, err
 	}
-	return user.toDomain(), nil
+	return mapper.ToDomainUser(result), nil
 }
 
-func (r *UserRepository) Save(ctx context.Context, user *user.User) (uint, error) {
-	gormUser := fromDomain(user)
-	err := r.db.WithContext(ctx).Create(gormUser).Error
-	if err != nil {
+func (r *UserRepository) Save(ctx context.Context, user *user.User) (int64, error) {
+	dbUser := mapper.ToDBUser(user)
+	if err := r.query.User.WithContext(ctx).Create(dbUser); err != nil {
 		return 0, err
 	}
-	return gormUser.ID, nil
+	return dbUser.ID, nil
 }
 
-func (r *UserRepository) Update(ctx context.Context, user *user.User) (uint, error) {
-	gormUser := fromDomain(user)
-	err := r.db.WithContext(ctx).Where("id = ?", user.ID).Updates(gormUser).Error
+func (r *UserRepository) Update(ctx context.Context, user *user.User) (int64, error) {
+	u := r.query.User
+	dbUser := mapper.ToDBUser(user)
+	_, err := u.WithContext(ctx).Where(u.ID.Eq(user.Int64ID())).Updates(dbUser)
 	if err != nil {
 		return 0, err
 	}
 	return user.ID, nil
 }
 
-func (r *UserRepository) Delete(ctx context.Context, id uint) error {
-	return r.db.WithContext(ctx).Delete(&User{}, id).Error
+func (r *UserRepository) Delete(ctx context.Context, id int64) error {
+	u := r.query.User
+	_, err := u.WithContext(ctx).Where(u.ID.Eq(id)).Delete()
+	if err != nil {
+		return err
+	}
+	return nil
 }
