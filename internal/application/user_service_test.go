@@ -22,17 +22,17 @@ func (m *MockUserRepository) FindByEmail(ctx context.Context, email string) (*us
 	return args.Get(0).(*user.User), args.Error(1)
 }
 
-func (m *MockUserRepository) Save(ctx context.Context, u *user.User) (uint, error) {
+func (m *MockUserRepository) Save(ctx context.Context, u *user.User) (int64, error) {
 	args := m.Called(ctx, u)
-	return uint(args.Int(0)), args.Error(1)
+	return int64(args.Int(0)), args.Error(1)
 }
 
-func (m *MockUserRepository) Update(ctx context.Context, u *user.User) (uint, error) {
+func (m *MockUserRepository) Update(ctx context.Context, u *user.User) (int64, error) {
 	args := m.Called(ctx, u)
-	return uint(args.Int(0)), args.Error(1)
+	return int64(args.Int(0)), args.Error(1)
 }
 
-func (m *MockUserRepository) Delete(ctx context.Context, id uint) error {
+func (m *MockUserRepository) Delete(ctx context.Context, id int64) error {
 	args := m.Called(ctx, id)
 	return args.Error(0)
 }
