@@ -27,7 +27,7 @@ func ToDomainUser(dbModel *model.User) *user.User {
 
 func ToDBUser(user *user.User) *model.User {
 	dbUser := &model.User{}
-	dbUser.ID = user.Int64ID()
+	dbUser.ID = user.ID
 	dbUser.Email = user.Email
 	dbUser.Name = user.Name
 	dbUser.PasswordHash = user.PasswordHash()

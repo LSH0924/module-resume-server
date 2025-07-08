@@ -70,10 +70,6 @@ func (u *User) CheckPassword(plainPassword string) bool {
 	return util.CheckPasswordHash(plainPassword, u.passwordHash)
 }
 
-func (u *User) Int64ID() int64 {
-	return int64(u.ID)
-}
-
 func (u *User) PasswordHash() string {
 	return u.passwordHash
 }

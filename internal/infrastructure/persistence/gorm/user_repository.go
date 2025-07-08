@@ -12,7 +12,7 @@ type UserRepository struct {
 	query *query.Query
 }
 
-func NewUserRepository(query *query.Query) *UserRepository {
+func NewUserRepository(query *query.Query) user.Repository {
 	return &UserRepository{query}
 }
 
@@ -36,7 +36,7 @@ func (r *UserRepository) Save(ctx context.Context, user *user.User) (int64, erro
 func (r *UserRepository) Update(ctx context.Context, user *user.User) (int64, error) {
 	u := r.query.User
 	dbUser := mapper.ToDBUser(user)
-	_, err := u.WithContext(ctx).Where(u.ID.Eq(user.Int64ID())).Updates(dbUser)
+	_, err := u.WithContext(ctx).Where(u.ID.Eq(user.ID)).Updates(dbUser)
 	if err != nil {
 		return 0, err
 	}
