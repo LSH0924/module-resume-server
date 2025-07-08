@@ -27,7 +27,7 @@ func newDiary(db *gorm.DB, opts ...gen.DOOption) diary {
 
 	tableName := _diary.diaryDo.TableName()
 	_diary.ALL = field.NewAsterisk(tableName)
-	_diary.ID = field.NewString(tableName, "id")
+	_diary.ID = field.NewInt64(tableName, "id")
 	_diary.UsersID = field.NewInt64(tableName, "users_id")
 	_diary.WorkExperiencesID = field.NewInt64(tableName, "work_experiences_id")
 	_diary.TypesID = field.NewInt64(tableName, "types_id")
@@ -47,7 +47,7 @@ type diary struct {
 	diaryDo diaryDo
 
 	ALL               field.Asterisk
-	ID                field.String
+	ID                field.Int64
 	UsersID           field.Int64
 	WorkExperiencesID field.Int64
 	TypesID           field.Int64
@@ -73,7 +73,7 @@ func (d diary) As(alias string) *diary {
 
 func (d *diary) updateTableName(table string) *diary {
 	d.ALL = field.NewAsterisk(table)
-	d.ID = field.NewString(table, "id")
+	d.ID = field.NewInt64(table, "id")
 	d.UsersID = field.NewInt64(table, "users_id")
 	d.WorkExperiencesID = field.NewInt64(table, "work_experiences_id")
 	d.TypesID = field.NewInt64(table, "types_id")

@@ -14,7 +14,7 @@ const TableNameDiary = "diaries"
 
 // Diary mapped from table <diaries>
 type Diary struct {
-	ID                string         `gorm:"column:id;primaryKey;default:gen_random_uuid()" json:"id"`
+	ID                int64          `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	UsersID           int64          `gorm:"column:users_id;not null" json:"users_id"`
 	WorkExperiencesID int64          `gorm:"column:work_experiences_id" json:"work_experiences_id"`
 	TypesID           int64          `gorm:"column:types_id" json:"types_id"`
