@@ -10,5 +10,8 @@ type LoginRequest struct {
 }
 
 func (l LoginRequest) ToDomain() *user.User {
-	return user.NewUserForLogin(l.Email, l.Password)
+	return &user.User{
+		Email:    l.Email,
+		Password: l.Password,
+	}
 }

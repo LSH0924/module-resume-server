@@ -66,10 +66,6 @@ func (a *authService) Logout(context context.Context, token string) error {
 		remainingTime = time.Until(claims.ExpiresAt.Time)
 	}
 
-	if remainingTime < 0 {
-		return nil
-	}
-
 	redisErr := a.cache.Set(context, "blocklist:"+token, "true", remainingTime)
 	if redisErr != nil {
 		return redisErr

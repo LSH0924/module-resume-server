@@ -32,13 +32,6 @@ func NewUserForSave(email, name, plainPassword string, profileUrl *string) (*Use
 	}, nil
 }
 
-func NewUserForLogin(email, password string) *User {
-	return &User{
-		Email:    email,
-		Password: password,
-	}
-}
-
 func (u *User) CheckPassword(plainPassword string) bool {
 	return util.CheckPasswordHash(plainPassword, u.passwordHash)
 }

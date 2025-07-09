@@ -43,24 +43,24 @@ func TestUserService_Save(t *testing.T) {
 	ctx := context.Background()
 	testUser := &user.User{Email: "test@example.com", Password: "password"}
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("성공", func(t *testing.T) {
 		mockRepo.On("Save", ctx, testUser).Return(1, nil).Once()
 
 		id, err := userService.Save(ctx, testUser)
 
 		assert.NoError(t, err)
-		assert.Equal(t, uint(1), id)
+		assert.Equal(t, int64(1), id)
 		mockRepo.AssertExpectations(t)
 	})
 
-	t.Run("error", func(t *testing.T) {
+	t.Run("실패", func(t *testing.T) {
 		mockRepo.On("Save", ctx, testUser).Return(0, errors.New("db error")).Once()
 
 		id, err := userService.Save(ctx, testUser)
 
 		assert.Error(t, err)
 		assert.Equal(t, "db error", err.Error())
-		assert.Equal(t, uint(0), id)
+		assert.Equal(t, int64(0), id)
 		mockRepo.AssertExpectations(t)
 	})
 }
@@ -71,24 +71,24 @@ func TestUserService_Update(t *testing.T) {
 	ctx := context.Background()
 	testUser := &user.User{ID: 1, Email: "update@example.com"}
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("성공", func(t *testing.T) {
 		mockRepo.On("Update", ctx, testUser).Return(1, nil).Once()
 
 		id, err := userService.Update(ctx, testUser)
 
 		assert.NoError(t, err)
-		assert.Equal(t, uint(1), id)
+		assert.Equal(t, int64(1), id)
 		mockRepo.AssertExpectations(t)
 	})
 
-	t.Run("error", func(t *testing.T) {
+	t.Run("실패", func(t *testing.T) {
 		mockRepo.On("Update", ctx, testUser).Return(0, errors.New("update failed")).Once()
 
 		id, err := userService.Update(ctx, testUser)
 
 		assert.Error(t, err)
 		assert.Equal(t, "update failed", err.Error())
-		assert.Equal(t, uint(0), id)
+		assert.Equal(t, int64(0), id)
 		mockRepo.AssertExpectations(t)
 	})
 }
@@ -99,7 +99,7 @@ func TestUserService_Delete(t *testing.T) {
 	ctx := context.Background()
 	testUser := &user.User{ID: 1}
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("성공", func(t *testing.T) {
 		mockRepo.On("Delete", ctx, testUser.ID).Return(nil).Once()
 
 		err := userService.Delete(ctx, testUser)
@@ -108,7 +108,7 @@ func TestUserService_Delete(t *testing.T) {
 		mockRepo.AssertExpectations(t)
 	})
 
-	t.Run("error", func(t *testing.T) {
+	t.Run("실패", func(t *testing.T) {
 		mockRepo.On("Delete", ctx, testUser.ID).Return(errors.New("delete failed")).Once()
 
 		err := userService.Delete(ctx, testUser)

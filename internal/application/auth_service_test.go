@@ -57,7 +57,7 @@ func TestAuthService_Login(t *testing.T) {
 	storedUser := &user.User{ID: 1, Email: email}
 	storedUser.SetPasswordHash(hashedPassword)
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("성공", func(t *testing.T) {
 		mockUserRepo.On("FindByEmail", ctx, email).Return(storedUser, nil).Once()
 
 		token, err := authService.Login(ctx, loginAttemptUser)
@@ -67,7 +67,7 @@ func TestAuthService_Login(t *testing.T) {
 		mockUserRepo.AssertExpectations(t)
 	})
 
-	t.Run("user not found", func(t *testing.T) {
+	t.Run("사용자를 찾을 수 없음", func(t *testing.T) {
 		mockUserRepo.On("FindByEmail", ctx, email).Return(nil, errors.New("user not found")).Once()
 
 		token, err := authService.Login(ctx, loginAttemptUser)
@@ -78,7 +78,7 @@ func TestAuthService_Login(t *testing.T) {
 		mockUserRepo.AssertExpectations(t)
 	})
 
-	t.Run("invalid password", func(t *testing.T) {
+	t.Run("잘못된 비밀번호", func(t *testing.T) {
 		wrongPasswordUser := &user.User{Email: email, Password: "wrong-password"}
 		mockUserRepo.On("FindByEmail", ctx, email).Return(storedUser, nil).Once()
 
@@ -97,7 +97,7 @@ func TestAuthService_Logout(t *testing.T) {
 	authService := NewAuthService(mockUserRepo, mockCache, testSecret)
 	ctx := context.Background()
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("성공", func(t *testing.T) {
 		expiresAt := time.Now().Add(time.Hour)
 		token := generateTestToken(t, "test@example.com", testSecret, expiresAt)
 		remainingTime := time.Until(expiresAt)
@@ -122,7 +122,7 @@ func TestAuthService_Authenticate(t *testing.T) {
 	ctx := context.Background()
 	email := "user@example.com"
 
-	t.Run("success", func(t *testing.T) {
+	t.Run("성공", func(t *testing.T) {
 		token := generateTestToken(t, email, testSecret, time.Now().Add(time.Hour))
 		mockCache.On("Get", ctx, "blocklist:"+token).Return("", nil).Once()
 
@@ -134,7 +134,7 @@ func TestAuthService_Authenticate(t *testing.T) {
 		mockCache.AssertExpectations(t)
 	})
 
-	t.Run("token is blocklisted", func(t *testing.T) {
+	t.Run("토큰이 블랙리스트에 있습니다", func(t *testing.T) {
 		token := generateTestToken(t, email, testSecret, time.Now().Add(time.Hour))
 		mockCache.On("Get", ctx, "blocklist:"+token).Return("true", nil).Once()
 
@@ -146,7 +146,7 @@ func TestAuthService_Authenticate(t *testing.T) {
 		mockCache.AssertExpectations(t)
 	})
 
-	t.Run("invalid token - bad signature", func(t *testing.T) {
+	t.Run("잘못된 토큰 - 잘못된 서명", func(t *testing.T) {
 		token := generateTestToken(t, email, "wrong-secret", time.Now().Add(time.Hour))
 		mockCache.On("Get", ctx, "blocklist:"+token).Return("", nil).Once()
 
@@ -157,7 +157,7 @@ func TestAuthService_Authenticate(t *testing.T) {
 		mockCache.AssertExpectations(t)
 	})
 
-	t.Run("invalid token - expired", func(t *testing.T) {
+	t.Run("잘못된 토큰 - 만료됨", func(t *testing.T) {
 		token := generateTestToken(t, email, testSecret, time.Now().Add(-time.Hour))
 		mockCache.On("Get", ctx, "blocklist:"+token).Return("", nil).Once()
 
