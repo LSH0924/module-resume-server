@@ -5,10 +5,10 @@ import (
 )
 
 type SaveUser struct {
-	Email      string `json:"email" binding:"required,email"`
-	Name       string `json:"name" binding:"required"`
-	Password   string `json:"password" binding:"required,min=12"`
-	ProfileUrl string `json:"profileUrl" binding:"url"`
+	Email      string  `json:"email" binding:"required,email"`
+	Name       string  `json:"name" binding:"required"`
+	Password   string  `json:"password" binding:"required,min=12"`
+	ProfileUrl *string `json:"profileUrl" binding:"url"`
 }
 
 func (s SaveUser) ToDomain() (*user.User, error) {
@@ -20,14 +20,19 @@ func (s SaveUser) ToDomain() (*user.User, error) {
 }
 
 type UpdateUser struct {
-	ID         int64  `json:"id" binding:"required,min=1"`
-	Email      string `json:"email" binding:"email"`
-	Name       string `json:"name"`
-	ProfileUrl string `json:"profileUrl" binding:"url"`
+	ID         int64   `json:"id" binding:"required,min=1"`
+	Email      string  `json:"email" binding:"email"`
+	Name       string  `json:"name"`
+	ProfileURL *string `json:"profileUrl" binding:"url"`
 }
 
 func (u UpdateUser) ToDomain() *user.User {
-	return user.NewUserForUpdate(u.ID, u.Email, u.Name, u.ProfileUrl)
+	return &user.User{
+		ID:         u.ID,
+		Email:      u.Email,
+		Name:       u.Name,
+		ProfileURL: u.ProfileURL,
+	}
 }
 
 type UpdateUserPassword struct {
@@ -41,5 +46,7 @@ type DeleteUser struct {
 }
 
 func (d DeleteUser) ToDomain() *user.User {
-	return user.NewUserForDelete(d.ID)
+	return &user.User{
+		ID: d.ID,
+	}
 }

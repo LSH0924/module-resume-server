@@ -12,13 +12,13 @@ type User struct {
 	Name         string
 	Password     string
 	passwordHash string
-	ProfileURL   string
+	ProfileURL   *string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
 }
 
-func NewUserForSave(email, name, plainPassword, profileUrl string) (*User, error) {
+func NewUserForSave(email, name, plainPassword string, profileUrl *string) (*User, error) {
 	hashedPassword, err := util.HashPassword(plainPassword)
 	if err != nil {
 		return nil, err
@@ -32,37 +32,10 @@ func NewUserForSave(email, name, plainPassword, profileUrl string) (*User, error
 	}, nil
 }
 
-func NewUserForUpdate(id int64, email, name, profileUrl string) *User {
-	return &User{
-		ID:         id,
-		Email:      email,
-		Name:       name,
-		ProfileURL: profileUrl,
-	}
-}
-
-func NewUserForDelete(id int64) *User {
-	return &User{
-		ID: id,
-	}
-}
-
 func NewUserForLogin(email, password string) *User {
 	return &User{
 		Email:    email,
 		Password: password,
-	}
-}
-
-func Hydrate(id int64, email, name, hashedPassword string, createdAt, updatedAt time.Time, deletedAt *time.Time) *User {
-	return &User{
-		ID:           id,
-		Email:        email,
-		Name:         name,
-		passwordHash: hashedPassword,
-		CreatedAt:    createdAt,
-		UpdatedAt:    updatedAt,
-		DeletedAt:    deletedAt,
 	}
 }
 

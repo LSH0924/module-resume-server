@@ -31,7 +31,9 @@ func ToDBUser(user *user.User) *model.User {
 	dbUser.Email = user.Email
 	dbUser.Name = user.Name
 	dbUser.PasswordHash = user.PasswordHash()
-	dbUser.ProfileURL = user.ProfileURL
+	if user.ProfileURL != nil {
+		dbUser.ProfileURL = *user.ProfileURL
+	}
 	dbUser.CreatedAt = user.CreatedAt
 	dbUser.UpdatedAt = user.UpdatedAt
 	return dbUser
